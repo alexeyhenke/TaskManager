@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Мой Менеджер Задач</title>
+    </head>
+    <body>
+        <h1>Список моих задач</h1>
+        <!-- Новая форма для добавления задачи -->
+        <form action="" method="POST">
+            {% csrf_token %}
+            <input name="task_title" placeholder="Что нужно сделать?" required type="text">
+            <button type="submit">Добавить</button>
+        </form>
+
+        <ul>
+            <!-- Запускаем цикл по всем задачам, которые передали из views.py -->
+            {% for task in tasks %}
+            <li>
+                <!-- Если задача выполнена, зачеркнем ее -->
+                {% if task.is_completed %}
+                <s>{{ task.title }}</s> ✅
+                {% else %}
+                {{ task.title }}
+                {% endif %}
+            </li>
+            {% empty %}
+            <li>Задач пока нет! Добавьте их в админке.</li>
+            {% endfor %}
+        </ul>
+    </body>
+</html>
