@@ -16,7 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from tasks.views import index # Импортируем наш пустой экран
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', index), # Главная страница теперь ведет на наш index
 ]
