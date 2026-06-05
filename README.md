@@ -1,2 +1,2 @@
 # TaskManager
-Just training Django progect
+Just training Django progect.
