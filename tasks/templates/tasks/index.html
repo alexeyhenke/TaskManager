@@ -14,18 +14,33 @@
         </form>
 
         <ul>
-            <!-- Запускаем цикл по всем задачам, которые передали из views.py -->
             {% for task in tasks %}
-            <li>
-                <!-- Если задача выполнена, зачеркнем ее -->
-                {% if task.is_completed %}
-                <s>{{ task.title }}</s> ✅
-                {% else %}
-                {{ task.title }}
-                {% endif %}
-            </li>
+                <li style="margin-bottom: 10px;">
+                    <!-- Отображение текста задачи -->
+                    {% if task.is_completed %}
+                        <s style="color: gray;">{{ task.title }}</s> ✅
+                    {% else %}
+                        <span>{{ task.title }}</span>
+                    {% endif %}
+
+                    <!-- Кнопка Выполнено (показываем только для невыполненных) -->
+                    {% if not task.is_completed %}
+                        <form method="POST" action="" style="display: inline; margin-left: 10px;">
+                            {% csrf_token %}
+                            <input type="hidden" name="task_id" value="{{ task.id }}">
+                            <button type="submit" name="action" value="complete">Выполнено</button>
+                        </form>
+                    {% endif %}
+
+                    <!-- Кнопка Удалить (показываем всегда) -->
+                    <form method="POST" action="" style="display: inline; margin-left: 5px;">
+                        {% csrf_token %}
+                        <input type="hidden" name="task_id" value="{{ task.id }}">
+                        <button type="submit" name="action" value="delete" style="color: red;">Удалить</button>
+                    </form>
+                </li>
             {% empty %}
-            <li>Задач пока нет! Добавьте их в админке.</li>
+                <li>Задач пока нет!</li>
             {% endfor %}
         </ul>
     </body>
