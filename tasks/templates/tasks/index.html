@@ -1,47 +1,73 @@
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Мой Менеджер Задач</title>
-    </head>
-    <body>
-        <h1>Список моих задач</h1>
-        <!-- Новая форма для добавления задачи -->
-        <form action="" method="POST">
-            {% csrf_token %}
-            <input name="task_title" placeholder="Что нужно сделать?" required type="text">
-            <button type="submit">Добавить</button>
-        </form>
+<html lang="ru">
+<head>
+    {% load static %} <!-- Говорим Django, что мы будем использовать статические файлы -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мой Менеджер Задач</title>
+    <!-- Подключаем Bootstrap 5 для красивых кнопок, форм и сеток -->
+    <link href="https://jsdelivr.net" rel="stylesheet">
+    <!-- Подключаем наш собственный файл стилей -->
+    <link rel="stylesheet" href="{% static 'tasks/style.css' %}">
+</head>
+<body class="bg-light">
 
-        <ul>
-            {% for task in tasks %}
-                <li style="margin-bottom: 10px;">
-                    <!-- Отображение текста задачи -->
-                    {% if task.is_completed %}
-                        <s style="color: gray;">{{ task.title }}</s> ✅
-                    {% else %}
-                        <span>{{ task.title }}</span>
-                    {% endif %}
+    <div class="container main-container">
+        <div class="card shadow-sm p-4 bg-white rounded">
+            <h1 class="text-center mb-4 text-primary">📝 Менеджер задач</h1>
 
-                    <!-- Кнопка Выполнено (показываем только для невыполненных) -->
-                    {% if not task.is_completed %}
-                        <form method="POST" action="" style="display: inline; margin-left: 10px;">
-                            {% csrf_token %}
-                            <input type="hidden" name="task_id" value="{{ task.id }}">
-                            <button type="submit" name="action" value="complete">Выполнено</button>
-                        </form>
-                    {% endif %}
+            <!-- Форма для добавления задачи -->
+            <form method="POST" action="" class="input-group mb-4">
+                {% csrf_token %}
+                <input type="text" name="task_title" class="form-control" placeholder="Что нужно сделать?" required>
+                <button class="btn btn-primary" type="submit">Добавить</button>
+            </form>
 
-                    <!-- Кнопка Удалить (показываем всегда) -->
-                    <form method="POST" action="" style="display: inline; margin-left: 5px;">
-                        {% csrf_token %}
-                        <input type="hidden" name="task_id" value="{{ task.id }}">
-                        <button type="submit" name="action" value="delete" style="color: red;">Удалить</button>
-                    </form>
-                </li>
-            {% empty %}
-                <li>Задач пока нет!</li>
-            {% endfor %}
-        </ul>
-    </body>
+            <!-- Список задач -->
+            <ul class="list-group">
+                {% for task in tasks %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+
+                        <!-- Текст задачи -->
+                        <div class="me-auto">
+                            {% if task.is_completed %}
+                                <span class="completed-task">{{ task.title }}</span>
+                                <span class="badge bg-success ms-2">Выполнено</span>
+                            {% else %}
+                                <span>{{ task.title }}</span>
+                            {% endif %}
+                        </div>
+
+                        <!-- Блок с кнопками действий -->
+                        <div class="btn-group" role="group">
+                            <!-- Кнопка Выполнено -->
+                            {% if not task.is_completed %}
+                                <form method="POST" action="" style="display: inline;">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="task_id" value="{{ task.id }}">
+                                    <button type="submit" name="action" value="complete" class="btn btn-sm btn-outline-success">
+                                        ✓
+                                    </button>
+                                </form>
+                            {% endif %}
+
+                            <!-- Кнопка Удалить -->
+                            <form method="POST" action="" style="display: inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="task_id" value="{{ task.id }}">
+                                <button type="submit" name="action" value="delete" class="btn btn-sm btn-outline-danger ms-1">
+                                    ✕
+                                </button>
+                            </form>
+                        </div>
+
+                    </li>
+                {% empty %}
+                    <li class="list-group-item text-center text-muted">Задач пока нет! Отдыхайте.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+</body>
 </html>
