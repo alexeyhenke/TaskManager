@@ -1,0 +1,12 @@
+/* Стили для выполненных задач */
+.completed-task {
+    text-decoration: line-through;
+    color: #6c757d;
+    font-style: italic;
+}
+
+/* Небольшой отступ для всего контейнера */
+.main-container {
+    max-width: 600px;
+    margin: 50px auto;
+}
