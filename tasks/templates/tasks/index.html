@@ -1,21 +1,24 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    {% load static %} <!-- Говорим Django, что мы будем использовать статические файлы -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Мой Менеджер Задач</title>
-    <!-- Подключаем Bootstrap 5 для красивых кнопок, форм и сеток -->
-<!--    <link href="https://jsdelivr.net" rel="stylesheet">-->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <!-- Подключаем наш собственный файл стилей -->
+    {% load static %}
     <link rel="stylesheet" href="{% static 'tasks/style.css' %}">
 </head>
 <body class="bg-light">
 
     <div class="container main-container">
         <div class="card shadow-sm p-4 bg-white rounded">
-            <h1 class="text-center mb-4 text-primary">📝 Менеджер задач</h1>
+            <h1 class="text-center mb-2 text-primary">📝 Менеджер задач</h1>
+
+            <!-- СЧЕТЧИК ЗАДАЧ -->
+            <p class="text-center text-muted mb-4">
+                Осталось выполнить задач:
+                <span class="badge bg-primary fs-6">{{ active_count }}</span>
+            </p>
 
             <!-- Форма для добавления задачи -->
             <form method="POST" action="" class="input-group mb-4">
@@ -24,26 +27,42 @@
                 <button class="btn btn-primary" type="submit">Добавить</button>
             </form>
 
+            <!-- ВКЛАДКИ (TABS) -->
+            <ul class="nav nav-tabs mb-3">
+                <li class="nav-item">
+                    <!-- Если вкладка active, делаем ее подсвеченной через класс 'active' -->
+                    <a class="nav-link {% if current_tab == 'active' %}active{% endif %}" href="/?tab=active">
+                        Активные
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if current_tab == 'completed' %}active{% endif %}" href="/?tab=completed">
+                        Выполненные
+                    </a>
+                </li>
+            </ul>
+
             <!-- Список задач -->
             <ul class="list-group">
                 {% for task in tasks %}
                     <li class="list-group-item d-flex justify-content-between align-items-center">
 
-                        <!-- Текст задачи -->
                         <div class="me-auto">
                             {% if task.is_completed %}
                                 <span class="completed-task">{{ task.title }}</span>
-                                <span class="badge bg-success ms-2">Выполнено</span>
+                                <span class="badge bg-success ms-2">Готово</span>
                             {% else %}
                                 <span>{{ task.title }}</span>
                             {% endif %}
+
+                            <div class="text-muted" style="font-size: 0.8rem;">
+                                Добавлено: {{ task.created_at|date:"d.m.Y H:i" }}
+                            </div>
                         </div>
 
-                        <!-- Блок с кнопками действий -->
                         <div class="btn-group" role="group">
-                            <!-- Кнопка Выполнено -->
                             {% if not task.is_completed %}
-                                <form method="POST" action="" style="display: inline;">
+                                <form method="POST" action="">
                                     {% csrf_token %}
                                     <input type="hidden" name="task_id" value="{{ task.id }}">
                                     <button type="submit" name="action" value="complete" class="btn btn-sm btn-outline-success">
@@ -52,8 +71,7 @@
                                 </form>
                             {% endif %}
 
-                            <!-- Кнопка Удалить -->
-                            <form method="POST" action="" style="display: inline;">
+                            <form method="POST" action="">
                                 {% csrf_token %}
                                 <input type="hidden" name="task_id" value="{{ task.id }}">
                                 <button type="submit" name="action" value="delete" class="btn btn-sm btn-outline-danger ms-1">
@@ -64,7 +82,7 @@
 
                     </li>
                 {% empty %}
-                    <li class="list-group-item text-center text-muted">Задач пока нет! Отдыхайте.</li>
+                    <li class="list-group-item text-center text-muted">В этой вкладке пока пусто!</li>
                 {% endfor %}
             </ul>
         </div>
