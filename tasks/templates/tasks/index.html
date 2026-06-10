@@ -12,6 +12,17 @@
 
     <div class="container main-container">
         <div class="card shadow-sm p-4 bg-white rounded">
+            <!-- Блок пользователя -->
+            <div class="d-flex justify-content-between align-items-center mb-3" style="font-size: 0.9rem;">
+                <span class="text-muted">Вы вошли как: <strong>{{ user.username }}</strong></span>
+                <!-- Ссылка для выхода из аккаунта -->
+                <form method="POST" action="{% url 'logout' %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-outline-secondary">Выйти</button>
+                </form>
+
+            </div>
+
             <h1 class="text-center mb-2 text-primary">📝 Менеджер задач</h1>
 
             <!-- СЧЕТЧИК ЗАДАЧ -->
