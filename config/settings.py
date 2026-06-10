@@ -116,3 +116,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+# После успешного входа перенаправлять пользователя на главную страницу
+LOGIN_REDIRECT_URL = '/'
+# Куда отправлять пользователя после выхода из системы
+LOGOUT_REDIRECT_URL = '/login/'
+

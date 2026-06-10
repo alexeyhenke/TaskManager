@@ -3,6 +3,9 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required  # Импортируем защиту
 from .models import Task
+from django.contrib.auth.forms import UserCreationForm # Импортируем готовую форму
+from django.contrib.auth import login # Функция для автоматического входа после регистрации
+
 
 
 @login_required(login_url='/login/')  # Если пользователь не вошел, его кинет на /login/
@@ -44,3 +47,20 @@ def index(request):
         'active_count': active_count
     }
     return render(request, 'tasks/index.html', context)
+
+
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            # Сохраняем нового пользователя в базу данных
+            user = form.save()
+            # Автоматически логиним пользователя, чтобы ему не нужно было входить заново
+            login(request, user)
+            # Перенаправляем на главную страницу
+            return redirect('/')
+    else:
+        # Если пользователь просто открыл страницу — показываем пустую форму
+        form = UserCreationForm()
+
+    return render(request, 'registration/register.html', {'form': form})
